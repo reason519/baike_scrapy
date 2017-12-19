@@ -3,7 +3,7 @@ import MySQLdb
 
 class Mysql:
 
-    dsn = ("localhost","root","czr455163","baike")
+    dsn = ("localhost","root","mysql","baike")
 
     def __init__(self):
         self.conn = MySQLdb.connect(*self.dsn)
