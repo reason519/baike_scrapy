@@ -99,7 +99,7 @@ class MySpider(CrawlSpider):
                     pre_url='https://baike.baidu.com/item/' + syn_word[1] + '/' + syn_word[2]
                     try:
                         if len(polysemy.extract()) == 0:
-                            self.db.insert_wordinfo(pre_url,syn_word[1],syn_word[2],polysemy.extract()[0],synonym=syn)
+                            self.db.insert_wordinfo(pre_url,syn_word[1],syn_word[2],synonym=syn)
                         else:
                             self.db.insert_wordinfo(pre_url,syn_word[1],syn_word[2],polysemy.extract()[0],synonym=syn)
                     except Exception as e:
