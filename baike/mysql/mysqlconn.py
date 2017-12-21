@@ -3,7 +3,7 @@ import MySQLdb
 
 class Mysql:
 
-    dsn = ("localhost","root","mysql","baike")
+    dsn = ("localhost","root","czr455163","baike")
 
     def __init__(self):
         self.conn = MySQLdb.connect(*self.dsn)
@@ -108,3 +108,17 @@ class Mysql:
         self.cursor.execute(sql)
         res=self.cursor.fetchall()
         return res
+
+with Mysql() as db:
+    db.drop_table('wordinfo')
+    db.drop_table('urlfilter')
+    db.drop_table("itemfilter")
+    db.drop_table("viewfilter")
+    db.drop_table("subviewfilter")
+    db.create_table_wordinfo()
+    db.create_table_urlfilter()
+    db.create_table_itemfilter()
+    db.create_table_viewfilter()
+    db.create_table_subviewfilter()
+  #  db.create_index()
+    db.show_tables()

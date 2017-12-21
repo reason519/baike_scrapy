@@ -16,7 +16,7 @@ class MySpider(CrawlSpider):
     allowed_domains = ['baike.baidu.com']
     start_urls = ['https://baike.baidu.com']
     #start_urls=['https://baike.baidu.com/item/昆曲/216928?secondId=121630&mediaId=mda-gmrx0rhf23gtx296']
-
+    
 
     #下面的start_urls用于测试subview与view
     #start_urls=['http://baike.baidu.com/fenlei/%E6%BC%94%E5%87%BA']
@@ -26,9 +26,9 @@ class MySpider(CrawlSpider):
         # Extract links matching 'category.php' (but not matching 'subsection.php')
         # and follow links from them (since no callback means follow=True by default).
         Rule(LinkExtractor(allow=('baike.baidu.com', ), deny=('https?://baike.baidu.com/item','https?://baike.baidu.com/subview',
-                                               'https?://baike.baidu.com/view','https://baike.baidu.com/tashuo',
+                                               'https?://baike.baidu.com/view','https://baike.baidu.com/tashuo','https?://baike.baidu.com/pic',
                                                'https://baike.baidu.com/history','https://baike.baidu.com/historypic',
-                                               'http://baike.baidu.com/mall','https?://baike.baidu.com/albums',
+                                               'http://baike.baidu.com/mall','https?://baike.baidu.com/albums?',
                                                 'https?://baike.baidu.com/article','https://baike.baidu.com/difangzhi'
                                                'http://baike.baidu.com/campus','https://baike.baidu.com/redirect',
                                                 'https://baike.baidu.com/divideload'
