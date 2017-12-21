@@ -16,7 +16,7 @@ class MySpider(CrawlSpider):
     allowed_domains = ['baike.baidu.com']
     start_urls = ['https://baike.baidu.com']
     #start_urls=['https://baike.baidu.com/item/昆曲/216928?secondId=121630&mediaId=mda-gmrx0rhf23gtx296']
-
+    
 
     #下面的start_urls用于测试subview与view
     #start_urls=['http://baike.baidu.com/fenlei/%E6%BC%94%E5%87%BA']
@@ -26,9 +26,9 @@ class MySpider(CrawlSpider):
         # Extract links matching 'category.php' (but not matching 'subsection.php')
         # and follow links from them (since no callback means follow=True by default).
         Rule(LinkExtractor(allow=('baike.baidu.com', ), deny=('https?://baike.baidu.com/item','https?://baike.baidu.com/subview',
-                                               'https?://baike.baidu.com/view','https://baike.baidu.com/tashuo',
+                                               'https?://baike.baidu.com/view','https://baike.baidu.com/tashuo','https?://baike.baidu.com/pic',
                                                'https://baike.baidu.com/history','https://baike.baidu.com/historypic',
-                                               'http://baike.baidu.com/mall','https?://baike.baidu.com/albums',
+                                               'http://baike.baidu.com/mall','https?://baike.baidu.com/albums?',
                                                 'https?://baike.baidu.com/article','https://baike.baidu.com/difangzhi'
                                                'http://baike.baidu.com/campus','https://baike.baidu.com/redirect',
                                                 'https://baike.baidu.com/divideload'
@@ -87,14 +87,21 @@ class MySpider(CrawlSpider):
             #判断是否存在同义词条
             if response.url.find('fromtitle')!=-1 and '同义词' in response.xpath("//span[@class='view-tip-panel']/a/text()").extract():
                 syn_word=self.process_synonym_url(unquote_url)
+                syn_from= syn_word[0].split('/item/')
+                syn=syn_word[0]
+                if len(syn_from) == 2:
+                    syn=syn_from[1]
+                else:
+                    logging.log("同义词url出现问题："+unquote_url)
+
                 if len(syn_word)==3:
                     #原始词的url
                     pre_url='https://baike.baidu.com/item/' + syn_word[1] + '/' + syn_word[2]
                     try:
-                        if len(polysemy) == 0:
-                            self.db.insert_wordinfo(pre_url,syn_word[1],syn_word[2],synonym=title[0])
+                        if len(polysemy.extract()) == 0:
+                            self.db.insert_wordinfo(pre_url,syn_word[1],syn_word[2],polysemy.extract()[0],synonym=syn)
                         else:
-                            self.db.insert_wordinfo(pre_url,syn_word[1],syn_word[2],synonym=title[0])
+                            self.db.insert_wordinfo(pre_url,syn_word[1],syn_word[2],polysemy.extract()[0],synonym=syn)
                     except Exception as e:
                         logging.error("错误："+str(e))
                         logging.warning("该同义词已添加到数据库："+unquote_url)

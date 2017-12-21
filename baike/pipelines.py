@@ -10,7 +10,7 @@ import json
 class BaikePipeline(object):
 
     def open_spider(self, spider):
-        self.file = open('baike.json', 'wb')
+        self.file = open('baike.json', 'ab')
 
     def close_spider(self, spider):
         self.file.close()

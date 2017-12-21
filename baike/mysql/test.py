@@ -1,4 +1,4 @@
-from baike_12_19.baike.mysql.mysqlconn import Mysql
+
 
 with Mysql() as db:
     db.drop_table('wordinfo')
