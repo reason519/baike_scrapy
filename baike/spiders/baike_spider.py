@@ -16,7 +16,7 @@ class MySpider(CrawlSpider):
     allowed_domains = ['baike.baidu.com']
     start_urls = ['https://baike.baidu.com']
     #start_urls=['https://baike.baidu.com/item/昆曲/216928?secondId=121630&mediaId=mda-gmrx0rhf23gtx296']
-    
+
 
     #下面的start_urls用于测试subview与view
     #start_urls=['http://baike.baidu.com/fenlei/%E6%BC%94%E5%87%BA']
@@ -97,11 +97,13 @@ class MySpider(CrawlSpider):
                 if len(syn_word)==3:
                     #原始词的url
                     pre_url='https://baike.baidu.com/item/' + syn_word[1] + '/' + syn_word[2]
+                    if syn_word[2]=='':
+                        syn_word[2]=0
                     try:
                         if len(polysemy.extract()) == 0:
-                            self.db.insert_wordinfo(pre_url,syn_word[1],syn_word[2],synonym=syn)
+                            self.db.insert_wordinfo(pre_url,syn_word[1],int(syn_word[2]),synonym=syn)
                         else:
-                            self.db.insert_wordinfo(pre_url,syn_word[1],syn_word[2],polysemy.extract()[0],synonym=syn)
+                            self.db.insert_wordinfo(pre_url,syn_word[1],int(syn_word[2]),polysemy.extract()[0],synonym=syn)
                     except Exception as e:
                         logging.error("错误："+str(e))
                         logging.warning("该同义词已添加到数据库："+unquote_url)
@@ -118,7 +120,7 @@ class MySpider(CrawlSpider):
 
                     item['title'] = title[0]
                     item['wordid'] = wordid
-                    item['url'] = unquote(response.url)
+                    item['url'] = unquote_url
                     if len(polysemy.extract()) is not 0:
                         item['polysemy'] = polysemy.extract()[0]
                     item['summary'] = "".join(summary.xpath('.//text()').extract())
@@ -169,15 +171,34 @@ class MySpider(CrawlSpider):
         return wordid
 
     def process_synonym_url(self,url):
-        if url.rfind('?')!=-1:
+        # if url.rfind('?')!=-1:
+        #     url_list = url.split('?')
+        #     id_s = url_list[1].rfind('fromid=') + 7
+        #     id_e = url_list[1].rfind('#')
+        #     if id_e == -1:
+        #         id_e = len(url)
+        #     word_s = url_list[1].find('fromtitle=') + 10
+        #     word_e = url_list[1].find('&')
+        #     return (url_list[0],url_list[1][word_s:word_e],url_list[1][id_s:id_e])
+        # return -1
+        if url.rfind('?') != -1:
             url_list = url.split('?')
-            id_s = url_list[1].rfind('fromid=') + 7
-            id_e = url_list[1].rfind('#')
-            if id_e == -1:
-                id_e = len(url)
-            word_s = url_list[1].find('fromtitle=') + 10
-            word_e = url_list[1].find('&')
-            return (url_list[0],url_list[1][word_s:word_e],url_list[1][id_s:id_e])
+            if 'fromtitle=' in url_list[1] and 'fromid=' in url_list[1]:
+                wl=url_list[1].split('&')
+                
+                for w in wl:
+                    if 'fromtitle=' in w:
+                        title=w[w.find('fromtitle=') + 10:len(w)]
+                    if 'fromid=' in w:
+                        id_s = w.rfind('fromid=') + 7
+                        id_e = w.rfind('#')
+                        if id_e == -1:
+                            id_e = len(w)
+                        id=w[id_s:id_e]
+                        
+                return (url_list[0],title, id)
+            else:
+                return -1
         return -1
 
 
