@@ -77,7 +77,7 @@ class Mysql:
 
     #插入操作
     def insert_wordinfo(self,id,word,wordid=0,polysemy='',synonym=''):
-        sql="""INSERT INTO wordinfo(URL,WORD,WORDID,POLYSEMY,SYNONYM) VALUES ('%s','%s','%s','%s','%s')"""% \
+        sql="""INSERT INTO wordinfo(URL,WORD,WORDID,POLYSEMY,SYNONYM) VALUES ('%s','%s','%d','%s','%s')"""% \
             (id,word,wordid,polysemy,synonym)
         self.cursor.execute(sql)
         self.conn.commit()
